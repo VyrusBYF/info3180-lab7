@@ -1,3 +1,17 @@
+# pylint: disable=W0312
+# pylint: disable=C0111
+# pylint: disable=W0611
+# pylint: disable=C0303 
+# pylint: disable=E1101
+# pylint: disable=C0103
+# pylint: disable=C0301
+# pylint: disable=C0326
+# pylint: disable=R0903
+# pylint: disable=R0912
+# pylint: disable=C0411
+# pylint: disable=C0412
+# pylint: disable=C0121
+
 """
 Flask Documentation:     http://flask.pocoo.org/docs/
 Jinja2 Documentation:    http://jinja.pocoo.org/2/documentation/
@@ -5,8 +19,11 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
+import os, json
 from app import app
 from flask import render_template, request
+from app.forms import UploadForm
+from werkzeug.utils import secure_filename
 
 ###
 # Routing for your application.
@@ -27,6 +44,22 @@ def index(path):
     Also we will render the initial webpage and then let VueJS take control.
     """
     return render_template('index.html')
+
+
+@app.route('/api/upload', methods=['POST'])
+def upload():
+    form = UploadForm()
+    if request.method == 'POST' and form.validate():
+        desc = form.description.data
+        file = form.photo.data
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        js_msg = {"message":"File uploaded successfully", "filename":"you-uploaded-file.jpg", "description":"Some description for your image"}
+        message = json.dumps(js_msg)
+    else:
+        message = {"Errors":[{},{}]}
+    return render_template('upload.html')
 
 
 # Here we define a function to collect form errors from Flask-WTF
