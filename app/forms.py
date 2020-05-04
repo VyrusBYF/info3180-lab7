@@ -13,6 +13,6 @@ from flask_wtf.file import FileRequired, FileAllowed
 from wtforms import StringField, SelectField, TextAreaField, FileField, IntegerField
 from wtforms.validators import InputRequired
 
-class UploadForm():
+class UploadForm(FlaskForm):
 	description = TextAreaField('Description', validators=[InputRequired()])
-	photo = FileField('Photo', validators=[FileRequired(), FileAllowed(['jpg', 'png'])])
+	photo = FileField('Photo', validators=[FileRequired(), FileAllowed(['jpg', 'jpeg','png'])])
